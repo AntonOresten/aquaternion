@@ -23,7 +23,7 @@ Q([1, 2, 3])
 ```python
 from aquaternion import *
 
-q1 = Q([0, -7, 2, 9])
+q1 = Q([-7, 2, 9])
 q2 = Q([4, -1, -5])
 
 print(q1 + q2)
