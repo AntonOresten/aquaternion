@@ -85,4 +85,3 @@ class UnitVectors:
 
 
 UV = UnitVectors([q.copy() for q in [qi, qj, qk]])
-print(UV)
