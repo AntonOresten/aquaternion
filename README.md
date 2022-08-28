@@ -47,7 +47,7 @@ The *unmorphed* method is the inverse of *morph*. Thus:
 ```
 q = Q([1, 2, 3])
 
-# This coordinate system is rotated $\tau/3$ radians around the Q([1, 1, 1]) axis, compared to normal.
+# This coordinate system is rotated tau/3 radians around the Q([1, 1, 1]) axis, compared to normal.
 new_unit_vectors = UnitVectors([qj, qk, qi])
 
 # This will be equal to Q([3, 1, 2])
