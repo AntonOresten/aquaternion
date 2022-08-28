@@ -4,7 +4,7 @@ This package includes classes that can be used for calculating 3-dimensional tra
 
 ## Installation
 
-Navigate to the folder execute this command:
+Clone this repository and run the following command:
 ```
 python setup.py install
 ```
