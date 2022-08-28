@@ -24,7 +24,7 @@ Q(1, 2, 3)
 Q([1, 2, 3])
 ```
 
-### Performing arithmetic:
+### Performing arithmetics:
 ```python
 from aquaternion import *
 
