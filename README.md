@@ -2,7 +2,16 @@
  
 This package includes classes that can be used for calculating 3-dimensional translation and rotation.
 
+---
+
 ## Installation
+
+Navigate to the folder execute this command:
+```
+python setup.py install
+```
+
+---
 
 ## How to use
 
