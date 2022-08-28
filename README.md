@@ -43,7 +43,7 @@ Output:
 
 ## Linear Algebra
 The *morphed* method is equivalent to replacing the unit vectors of a Quaternion.
-The *unmorphed* method is the inverse of *morph*. Thus:
+The *unmorphed* method is the inverse of *morphed*. Thus:
 ```
 q = Q([1, 2, 3])
 
