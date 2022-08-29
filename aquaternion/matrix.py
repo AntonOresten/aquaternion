@@ -72,12 +72,18 @@ class UnitVectors:
         return self
 
 
-    def unmorphed(self, i_prime, j_prime, k_prime):
+    @property
+    def inverse(self):
+        i_prime, j_prime, k_prime = self.unit_vectors
         inverse_determinant = float(i_prime.x*(j_prime.y*k_prime.z-k_prime.y*j_prime.z) - j_prime.x*(i_prime.y*k_prime.z-k_prime.y*i_prime.z) + k_prime.x*(i_prime.y*j_prime.z-j_prime.y*i_prime.z))
         q1 = inverse_determinant*Q([(j_prime.y*k_prime.z-k_prime.y*j_prime.z), -(i_prime.y*k_prime.z-k_prime.y*i_prime.z), (i_prime.y*j_prime.z-j_prime.y*i_prime.z)])
         q2 = inverse_determinant*Q([-(j_prime.x*k_prime.z-k_prime.x*j_prime.z), (i_prime.x*k_prime.z-k_prime.x*i_prime.z), -(i_prime.x*j_prime.z-j_prime.x*i_prime.z)])
         q3 = inverse_determinant*Q([(j_prime.x*k_prime.y-k_prime.x*j_prime.y), -(i_prime.x*k_prime.y-k_prime.x*i_prime.y), (i_prime.x*j_prime.y-j_prime.x*i_prime.y)])
-        return self.morphed(q1, q2, q3)
+        return self.__class__([q1, q2, q3])
+        
+
+    def unmorphed(self, i_prime, j_prime, k_prime):
+        return self.morphed(*self.inverse)
 
     def unmorph(self, i_prime, j_prime, k_prime):
         self.unit_vectors = self.unmorphed(i_prime, j_prime, k_prime).unit_vectors
