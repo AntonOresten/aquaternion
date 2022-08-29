@@ -13,21 +13,18 @@ python setup.py install
 
 ### Creating a quaternion:
 ```python
-# The same quaternion can be created in different ways:
-Q(0, 1, 2, 3)
+from aquaternion import *
+
 Q([0, 1, 2, 3])
 # The four numbers correspond to the w, x, y, and z components respectively.
 
 # Creating a quaternion with only three numbers will assign the values to the x, y, and z (imaginary) components,
 # and leave w with the default value of 0
-Q(1, 2, 3)
 Q([1, 2, 3])
 ```
 
 ### Performing arithmetics:
 ```python
-from aquaternion import *
-
 q1 = Q([-7, 2, 9])
 q2 = Q([4, -1, -5])
 
@@ -43,8 +40,8 @@ Output:
 
 ## Linear Algebra
 The *morphed* method is equivalent to replacing the unit vectors of a Quaternion.
-The *unmorphed* method is the inverse of *morph*. Thus:
-```
+The *unmorphed* method is the inverse of *morphed*. Thus:
+```python
 q = Q([1, 2, 3])
 
 # This coordinate system is rotated tau/3 radians around the Q([1, 1, 1]) axis, compared to normal.

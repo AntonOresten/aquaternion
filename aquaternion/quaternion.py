@@ -1,6 +1,5 @@
 
 import math
-import numpy as np
 
 pi = math.pi
 
@@ -12,26 +11,12 @@ class Quaternion:
     Create a Quaternion number with a 4-dimensional vector [w, x, y, z]
     """
     
-    def __init__(self, *args):
+    def __init__(self, vector):
         
-        match len(args):
-            case 1:
-                arg = args[0]
-                if isinstance(arg, (np.ndarray, list, tuple)):
-                    vector = arg
-                    match len(vector):
-                        case 3:
-                            self.vector = np.array([0, *vector], dtype=np.float64)
-                        case 4:
-                            self.vector = np.array(vector, dtype=np.float64)
-                elif isinstance(arg, self.__class__):
-                    self.vector = np.array(arg.vector, dtype=np.float64)
-            case 3:
-                if validate_types(args, (float, int)):
-                    self.vector = np.array([0, *args], dtype=np.float64)
-            case 4:
-                if validate_types(args, (float, int)):
-                    self.vector = np.array(args, dtype=np.float64)
+        if len(vector) == 3:
+            self.vector = [0, vector[0], vector[1], vector[2]]
+        else:
+            self.vector = vector
     
     
     def __repr__(self):
@@ -71,7 +56,7 @@ class Quaternion:
 
     @property
     def norm(self) -> float:
-        return np.linalg.norm(self.vector)
+        return sum([x**2 for x in self.vector])**0.5
     @norm.setter
     def norm(self, new_norm):
         self.vector = self.normalized.vector * new_norm
@@ -79,8 +64,8 @@ class Quaternion:
     @property
     def normalized(self):
         if (norm := self.norm) == 0:
-            return self
-        return self.__class__(self.vector/norm)
+            return self.copy()
+        return self / norm
     
     def normalize(self):
         self.vector = self.normalized.vector
@@ -88,80 +73,97 @@ class Quaternion:
     
     @property
     def conjugate(self):
-        return self.__class__(self.w, -self.x, -self.y, -self.z)
+        return self.__class__([self.w, -self.x, -self.y, -self.z])
     
     @property
-    def square_sum(self)  -> float:
+    def sum_of_squares(self) -> float:
         return sum((x**2 for x in self.vector))
 
     @property
     def inverse(self):
-        return self.conjugate/self.square_sum
+        return self.conjugate/self.sum_of_squares
     
     reciprocal = inverse
         
     
     def __add__(self, other):
         
-        if isinstance(other, (float, int)):
-            return self.__class__(self.w+other, self.x, self.y, self.z)
-        
         if isinstance(other, self.__class__):
-            return self.__class__(self.w+other.w, self.x+other.x, self.y+other.y, self.z+other.z)
+            return self.__class__([self.w+other.w, self.x+other.x, self.y+other.y, self.z+other.z])
+        
+        if isinstance(other, (float, int)):
+            return self.__class__([self.w+other, self.x, self.y, self.z])
 
         return NotImplemented
     
-    __radd__ = __add__
-    
+    def __radd__(self, other):
+        
+        if isinstance(other, (float, int)):
+            return self.__class__([self.w+other, self.x, self.y, self.z])
+
+        return NotImplemented
+
     def __neg__(self):
-        return self.__class__(-self.w, -self.x, -self.y, -self.z)
+        return self.__class__([-self.w, -self.x, -self.y, -self.z])
     
     def __sub__(self, other):
-        return self+(-other)
+        
+        if isinstance(other, self.__class__):
+            return self.__class__([self.w-other.w, self.x-other.x, self.y-other.y, self.z-other.z])
+        
+        if isinstance(other, (float, int)):
+            return self.__class__([self.w-other, self.x, self.y, self.z])
+
+        return NotImplemented
     
     def __rsub__(self, other):
-        return (-self)+other
+        
+        if isinstance(other, (float, int)):
+            return self.__class__([other-self.w, -self.x, -self.y, -self.z])
+
+        return NotImplemented
     
     def __mul__(self, other):
         
         if isinstance(other, self.__class__):
-            return self.__class__(
+            return self.__class__([
                 self.w*other.w - self.x*other.x - self.y*other.y - self.z*other.z,
                 self.w*other.x + self.x*other.w + self.y*other.z - self.z*other.y,
                 self.w*other.y - self.x*other.z + self.y*other.w + self.z*other.x,
                 self.w*other.z + self.x*other.y - self.y*other.x + self.z*other.w,
-            )
+            ])
         
-        try:
-            return self.__class__(self.vector*other)
-        except:
-            return NotImplemented
+        if isinstance(other, (float, int)):
+            return self.__class__([self.w*other, self.x*other, self.y*other, self.z*other])
     
     def __rmul__(self, other):
         
-        try:
+        if isinstance(other, (float, int)):
             return self.__class__(other*self.vector)
-        except:
-            return NotImplemented
+        
+        if isinstance(other, self.__class__):
+            return Q.__mul__(other, self)
 
 
     def __truediv__(self, other):
         
-        if isinstance(other, (float, int)):
-            return self.__class__(self.vector/other)
-        
         if isinstance(other, self.__class__):
             return self * other.inverse
+        
+        if isinstance(other, (float, int)):
+            other_inv = 1 / other
+            return self.__class__([self.w*other_inv, self.x*other_inv, self.y*other_inv, self.z*other_inv])
         
         return NotImplemented
         
     def __rtruediv__(self, other):
         
-        if isinstance(other, (float, int)):
-            return self.__class__(self.vector/other)
-        
         if isinstance(other, self.__class__):
             return other.inverse * self
+        
+        if isinstance(other, (float, int)):
+            other_inv = 1 / other
+            return self.__class__([other_inv*self.w, other_inv*self.x, other_inv*self.y, other_inv*self.z])
         
         return NotImplemented
     
@@ -175,9 +177,6 @@ class Quaternion:
     def __setitem__(self, index, value):
         self.vector[int(index)] = float(value)
 
-
-    def __iter__(self):
-        return iter(self.vector)
     
     @property
     def components(self) -> list[float]:
@@ -187,12 +186,12 @@ class Quaternion:
         return self.__class__(self.components)
     
     @property
-    def qvector(self):
-        return self.__class__(0, self.x, self.y, self.z)
-    
-    @property
     def vector3(self):
         return self.vector[1:4]
+    
+    @property
+    def qvector(self):
+        return self.__class__(self.vector3)
     
     
     def rotated(self, axis, angle):
@@ -206,11 +205,11 @@ class Quaternion:
     
     
     def morphed(self, i_prime, j_prime, k_prime):
-        return self.__class__(
+        return self.__class__([
             self.x*i_prime.x + self.y*j_prime.x + self.z*k_prime.x,
             self.x*i_prime.y + self.y*j_prime.y + self.z*k_prime.y,
             self.x*i_prime.z + self.y*j_prime.z + self.z*k_prime.z,
-        )
+        ])
     
     def morph(self, i_prime, j_prime, k_prime):
         self.vector = self.morphed(i_prime, j_prime, k_prime).vector.copy()
@@ -238,11 +237,11 @@ class Quaternion:
 
     @classmethod
     def cross(cls, q1, q2):
-        return np.cross(q1.vector3, q2.vector3)
+        return (q1.qvector * q2.qvector).qvector
 
     @classmethod
     def dot(cls, q1, q2):
-        return np.dot(q1.vector, q2.vector)
+        return [q1.w*q2.w, q1.x*q2.x, q1.y*q2.y, q1.z*q2.z]
 
 Q = Quaternion
 
