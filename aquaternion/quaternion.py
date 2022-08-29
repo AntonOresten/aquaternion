@@ -3,8 +3,6 @@ import math
 
 pi = math.pi
 
-def validate_types(array, types):
-    return (False not in [isinstance(x, types) for x in array])
 
 class Quaternion:
     """
@@ -195,7 +193,8 @@ class Quaternion:
     
     
     def rotated(self, axis, angle):
-        q = math.cos(angle/2) + axis.normalized*math.sin(angle/2)
+        versor = axis.qvector.normalized
+        q = math.cos(angle/2) + versor*math.sin(angle/2)
         vector = (q*self*q.conjugate).vector
         return self.__class__(vector)
     
