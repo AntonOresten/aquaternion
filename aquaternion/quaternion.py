@@ -137,7 +137,7 @@ class Quaternion:
     def __rmul__(self, other):
         
         if isinstance(other, (float, int)):
-            return self.__class__(other*self.vector)
+            return self.__class__([other*self.w, other*self.x, other*self.y, other*self.z])
         
         if isinstance(other, self.__class__):
             return Q.__mul__(other, self)
@@ -195,8 +195,7 @@ class Quaternion:
     def rotated(self, axis, angle):
         versor = axis.qvector.normalized
         q = math.cos(angle/2) + versor*math.sin(angle/2)
-        vector = (q*self*q.conjugate).vector
-        return self.__class__(vector)
+        return q*self*q.conjugate
     
     def rotate(self, axis, angle):
         self.vector = self.rotated(axis, angle).vector.copy()
@@ -240,7 +239,7 @@ class Quaternion:
 
     @classmethod
     def dot(cls, q1, q2):
-        return [q1.w*q2.w, q1.x*q2.x, q1.y*q2.y, q1.z*q2.z]
+        return q1.w*q2.w + q1.x*q2.x + q1.y*q2.y + q1.z*q2.z
 
 Q = Quaternion
 
