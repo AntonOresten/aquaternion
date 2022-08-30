@@ -1,3 +1,4 @@
 build
 dist
 aquaternion.egg-info
+aquaternion/__pycache__
