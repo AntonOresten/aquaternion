@@ -22,7 +22,8 @@ class Quaternion:
 
     def __str__(self):
         return f'({self.w:.3f} {self.x:+.3f}i {self.y:+.3f}j {self.z:+.3f}k)'
-    
+
+
     @property
     def w(self) -> float:
         return self.vector[0]
@@ -58,6 +59,9 @@ class Quaternion:
     @norm.setter
     def norm(self, new_norm):
         self.vector = self.normalized.vector * new_norm
+        
+    def __abs__(self):
+        return self.norm
         
     @property
     def normalized(self):
@@ -164,6 +168,18 @@ class Quaternion:
             return self.__class__([other_inv*self.w, other_inv*self.x, other_inv*self.y, other_inv*self.z])
         
         return NotImplemented
+    
+    
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.vector == other.vector
+        return False
+    
+    def __bool__(self):
+        return True in [x != 0 for x in self]
+    
+    def __hash__(self):
+        return hash(self.vector)
     
 
     def __len__(self):
