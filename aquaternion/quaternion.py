@@ -164,19 +164,21 @@ class Quaternion:
             return other.inverse * self
         
         if isinstance(other, (float, int)):
-            other_inv = 1 / other
-            return self.__class__([other_inv*self.w, other_inv*self.x, other_inv*self.y, other_inv*self.z])
+            return other*self.inverse
         
         return NotImplemented
     
     
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.vector == other.vector
-        return False
+    def __round__(self, n):
+        return Q(list([round(x, n) for x in self]))
     
     def __bool__(self):
-        return True in [x != 0 for x in self]
+        return (True in [x != 0 for x in self])
+    
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return False not in [round(x, 10) == round(y, 10) for x, y in zip(self, other)]
+        return False
     
     def __hash__(self):
         return hash(self.vector)
@@ -204,12 +206,12 @@ class Quaternion:
         return self.vector[1:4]
     
     @property
-    def qvector(self):
+    def qvector3(self):
         return self.__class__(self.vector3)
     
     
     def rotated(self, axis, angle):
-        versor = axis.qvector.normalized
+        versor = axis.qvector3.normalized
         q = math.cos(angle/2) + versor*math.sin(angle/2)
         return q*self*q.conjugate
     
@@ -245,13 +247,13 @@ class Quaternion:
     @classmethod
     def exp(cls, q):
         a = q.w
-        v = q.qvector
+        v = q.qvector3
         norm = v.norm
         return math.exp(a)*(math.cos(norm)+v/norm*math.sin(norm))
 
     @classmethod
     def cross(cls, q1, q2):
-        return (q1.qvector * q2.qvector).qvector
+        return (q1.qvector3 * q2.qvector3).qvector3
 
     @classmethod
     def dot(cls, q1, q2):
