@@ -11,10 +11,14 @@ class Quaternion:
     
     def __init__(self, vector):
         
-        if len(vector) == 3:
-            self.vector = [0, vector[0], vector[1], vector[2]]
-        else:
-            self.vector = vector
+        if isinstance(vector, (list, tuple)):
+            if len(vector) == 3:
+                self.vector = [0, vector[0], vector[1], vector[2]]
+            else:
+                self.vector = vector
+        
+        elif isinstance(vector, self.__class__):
+            self.vector = vector.components
     
     
     def __repr__(self):

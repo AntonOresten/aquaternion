@@ -11,25 +11,11 @@ def run_test(function, args=(), n=10000):
     print(f"Ran function '{function.__name__}' {n} times in {end-start:.9f} seconds (avg: {(end-start)/n:.9f}s)")
 
 
-# q1, q2 = Q([1,2,3]), Q([-1, 5, 100, -3])
-
-# run_test(Q.__add__, (q1, q2))
-# run_test(Q.__radd__, (q1, q2))
-# run_test(Q.__neg__, (q1,))
-# run_test(Q.__sub__, (q1, q2))
-# run_test(Q.__rsub__, (q1, q2))
-# run_test(Q.__mul__, (q1, q2))
-# run_test(Q.__mul__, (q1, 1))
-# run_test(Q.__rmul__, (q1, q2))
-# run_test(Q.__rmul__, (q1, 1))
-# run_test(Q.__truediv__, (q1, q2))
-# run_test(Q.__rtruediv__, (q1, q2))
-
 from aquaternion import *
 
 def tests():
     assert repr(Q([0., 1, 2, 3])) == "Q([0.0, 1, 2, 3])"
-    assert str(Q([0., 1, 2, 3])) == "(0.000 +1.000i +2.000j +3.000k)"
+    assert str(Q((0., 1, 2, 3))) == "(0.000 +1.000i +2.000j +3.000k)"
     
     assert qi.w == 0
     assert qi.x == 1
@@ -71,7 +57,7 @@ def tests():
     assert qi.morphed(2*qk, 3*qj, 4*qi) == 2*qk
     assert (2*qk).unmorphed(2*qk, 3*qj, 4*qi) == qi
 
-    assert Q.dot(Q([1, 2, 3]), Q([1, 2, 3, 4])) == (Q([1, 2, 3])*Q([1, 2, 3, 4])).w.__neg__()
+    assert Q.dot(Q([1, 2, 3]), Q([1, 2, 3, 4])) == -(Q([1, 2, 3])*Q([1, 2, 3, 4])).w
 
 if __name__ == '__main__':
     tests()
