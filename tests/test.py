@@ -29,6 +29,7 @@ from aquaternion import *
 
 def tests():
     assert repr(Q([0., 1, 2, 3])) == "Q([0.0, 1, 2, 3])"
+    assert str(Q([0., 1, 2, 3])) == "(0.000 +1.000i +2.000j +3.000k)"
     
     assert qi.w == 0
     assert qi.x == 1
