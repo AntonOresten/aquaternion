@@ -1,16 +1,4 @@
 
-# TODO: make proper tests
-
-from time import perf_counter
-
-def run_test(function, args=(), n=10000):
-    start = perf_counter()
-    for _ in range(n):
-        function(*args)
-    end = perf_counter()
-    print(f"Ran function '{function.__name__}' {n} times in {end-start:.9f} seconds (avg: {(end-start)/n:.9f}s)")
-
-
 from aquaternion import *
 
 def tests():
@@ -61,8 +49,3 @@ def tests():
 
 if __name__ == '__main__':
     tests()
-
-
-# norm = lambda vector: sum([x**2 for x in vector])**0.5
-# run_test(np.linalg.norm, ([1, 2, 3],))
-# run_test(norm, ([1, 2, 3],))

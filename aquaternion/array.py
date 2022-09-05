@@ -1,5 +1,9 @@
 
+import math
+
 from .quaternion import Quaternion, qi, qj, qk
+from .matrix import UnitVectors
+
 
 class QuaternionArray:
 
@@ -12,16 +16,16 @@ class QuaternionArray:
                 else:
                     self.array = []
             case 1:
-                array = args[0]
-                if isinstance(array, (tuple, list)):
-                    if False not in (isinstance(q, Quaternion) for q in array):
-                        self.array = list(array)
-                    else:
-                        print("ValueError", array)
-                        self.array = []
-                elif isinstance(array, Quaternion):
-                    q = array
-                    self.array = [q]
+                self.array = args[0]
+                # if isinstance(array, (tuple, list)):
+                #     if False not in (isinstance(q, Quaternion) for q in array):
+                #         self.array = list(array)
+                #     else:
+                #         print("ValueError", array)
+                #         self.array = []
+                # elif isinstance(array, Quaternion):
+                #     q = array
+                #     self.array = [q]
             case _:
                 if False not in (isinstance(q, Quaternion) for q in args):
                     self.array = list(args)
@@ -53,18 +57,32 @@ class QuaternionArray:
         self.array[int(index)] = Quaternion(value)
 
     def __neg__(self):
-        return self.__class__(list((-q for q in self.array)))
+        return self.__class__(list([-q for q in self.array]))
+    
+    def __add__(self, other):
+        return self.__class__(list([q+other for q in self.array]))
+
+    __radd__ = __add__
+
+
+    def rotated(self, axis, angle):
+        versor = axis.qvector3.normalized
+        q = math.cos(angle/2) + versor*math.sin(angle/2)
+        q_inv = q.inverse
+        return self.__class__([q*p*q_inv for p in self.array])
 
     def rotate(self, axis, angle):
-        for q in self.array:
-            q.rotate(axis, angle)
+        self.array = self.rotated(axis, angle)
         return self
+
 
     def morphed(self, i_prime, j_prime, k_prime):
         return self.__class__(list([q.morphed(i_prime, j_prime, k_prime) for q in self.array]))
 
     def unmorphed(self, i_prime, j_prime, k_prime):
-        return self.__class__(list([q.unmorphed(i_prime, j_prime, k_prime) for q in self.array]))
+        unit_vectors_inverse = UnitVectors([i_prime, j_prime, k_prime]).inverse
+        return self.morphed(*unit_vectors_inverse)
+
 
     def copy(self):
         return self.__class__([q.copy() for q in self.array])

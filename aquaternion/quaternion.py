@@ -247,7 +247,7 @@ class Quaternion:
         """Returns a copy of the quaternion, rotated around an axis by a certain angle."""
         versor = axis.qvector3.normalized
         q = math.cos(angle/2) + versor*math.sin(angle/2)
-        return q*self*q.conjugate
+        return q*self*q.inverse
     
     def rotate(self, axis, angle):
         """Rotates the quaternion around an axis by a certain angle."""

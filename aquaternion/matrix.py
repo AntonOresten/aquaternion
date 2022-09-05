@@ -1,6 +1,6 @@
 
 from .quaternion import *
-from .array import *
+
 
 class UnitVectors:
     """
@@ -57,10 +57,13 @@ class UnitVectors:
 
 
     def rotated(self, axis, angle):
-        return self.__class__([q.rotated(axis, angle) for q in self.unit_vectors])
+        versor = axis.qvector3.normalized
+        q = math.cos(angle/2) + versor*math.sin(angle/2)
+        q_inv = q.inverse
+        return self.__class__([q*p*q_inv for p in self.unit_vectors])
 
     def rotate(self, axis, angle):
-        [q.rotate(axis, angle) for q in self.unit_vectors]
+        self.unit_vectors = self.rotated(axis, angle)
         return self
 
 
@@ -83,7 +86,7 @@ class UnitVectors:
         
 
     def unmorphed(self, i_prime, j_prime, k_prime):
-        return self.morphed(*self.inverse)
+        return self.morphed(*self.__class__([i_prime, j_prime, k_prime]).inverse)
 
     def unmorph(self, i_prime, j_prime, k_prime):
         self.unit_vectors = self.unmorphed(i_prime, j_prime, k_prime).unit_vectors
