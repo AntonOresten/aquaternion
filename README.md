@@ -1,6 +1,6 @@
 # aquaternion
  
-This package includes classes that can be used for calculating 3-dimensional translation and rotation.
+This package includes classes that can be used for calculating 3-dimensional translation and rotation using Quaternion algebra.
 
 ## Installation
 
