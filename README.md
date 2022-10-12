@@ -23,7 +23,7 @@ Q([0, 1, 2, 3])
 Q([1, 2, 3])
 ```
 
-### Performing arithmetics:
+### How to perform calculations:
 ```python
 q1 = Q([-7, 2, 9])
 q2 = Q([4, -1, -5])
@@ -46,7 +46,7 @@ The *unmorphed* method is the inverse of *morphed*. Thus:
 ```python
 q = Q([1, 2, 3])
 
-# This coordinate system is rotated tau/3 radians around the Q([1, 1, 1]) axis, compared to normal.
+# This coordinate system is rotated tau/3 radians around the Q([1, 1, 1]) axis, compared to the standard i, j, k unit vectors.
 new_unit_vectors = UnitVectors([qj, qk, qi])
 
 # This will be equal to Q([3, 1, 2])
