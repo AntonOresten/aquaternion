@@ -72,7 +72,7 @@ class QuaternionArray:
         return self.__class__([q*p*q_inv for p in self.array])
 
     def rotate(self, axis, angle):
-        self.array = self.rotated(axis, angle)
+        self.array = self.rotated(axis, angle).array
         return self
 
 
