@@ -242,11 +242,14 @@ class Quaternion:
         """Returns a copy of the quaternion with the real part set to zero."""
         return self.__class__(self.vector3)
     
+    @property
+    def versor(self):
+        """Returns the versor of the quaternion"""
+        return self.qvector3.normalized
     
     def rotated(self, axis, angle):
         """Returns a copy of the quaternion, rotated around an axis by a certain angle."""
-        versor = axis.qvector3.normalized
-        q = math.cos(angle/2) + versor*math.sin(angle/2)
+        q = math.cos(angle/2) + axis.versor*math.sin(angle/2)
         return q*self*q.inverse
     
     def rotate(self, axis, angle):
@@ -270,11 +273,11 @@ class Quaternion:
     
     def unmorphed(self, i_prime, j_prime, k_prime):
         """The inverse of morphed; inverse transform of unit vectors."""
-        det = float(i_prime.x*(j_prime.y*k_prime.z-k_prime.y*j_prime.z) - j_prime.x*(i_prime.y*k_prime.z-k_prime.y*i_prime.z) + k_prime.x*(i_prime.y*j_prime.z-j_prime.y*i_prime.z))
-        inverse_det = 1/det
-        q1 = inverse_det*Q([(j_prime.y*k_prime.z-k_prime.y*j_prime.z), -(i_prime.y*k_prime.z-k_prime.y*i_prime.z), (i_prime.y*j_prime.z-j_prime.y*i_prime.z)])
-        q2 = inverse_det*Q([-(j_prime.x*k_prime.z-k_prime.x*j_prime.z), (i_prime.x*k_prime.z-k_prime.x*i_prime.z), -(i_prime.x*j_prime.z-j_prime.x*i_prime.z)])
-        q3 = inverse_det*Q([(j_prime.x*k_prime.y-k_prime.x*j_prime.y), -(i_prime.x*k_prime.y-k_prime.x*i_prime.y), (i_prime.x*j_prime.y-j_prime.x*i_prime.y)])
+        determinant = float(i_prime.x*(j_prime.y*k_prime.z-k_prime.y*j_prime.z) - j_prime.x*(i_prime.y*k_prime.z-k_prime.y*i_prime.z) + k_prime.x*(i_prime.y*j_prime.z-j_prime.y*i_prime.z))
+        determinant_reciprocal = 1/determinant
+        q1 = determinant_reciprocal*Q([(j_prime.y*k_prime.z-k_prime.y*j_prime.z), -(i_prime.y*k_prime.z-k_prime.y*i_prime.z), (i_prime.y*j_prime.z-j_prime.y*i_prime.z)])
+        q2 = determinant_reciprocal*Q([-(j_prime.x*k_prime.z-k_prime.x*j_prime.z), (i_prime.x*k_prime.z-k_prime.x*i_prime.z), -(i_prime.x*j_prime.z-j_prime.x*i_prime.z)])
+        q3 = determinant_reciprocal*Q([(j_prime.x*k_prime.y-k_prime.x*j_prime.y), -(i_prime.x*k_prime.y-k_prime.x*i_prime.y), (i_prime.x*j_prime.y-j_prime.x*i_prime.y)])
         return self.morphed(q1, q2, q3)
     
     def unmorph(self, i_prime, j_prime, k_prime):
